@@ -109,9 +109,12 @@ async def input_sender_card(message: types.Message):
 
 `{card_to_pay}`
 
-После перевода нажмите кнопку ниже.",
-        parse_mode="Markdown", reply_markup=kb
-    )
+text = (
+    f"Переведите {data['amount']} сум на карту:\n\n"
+    f"`{card_to_pay}`\n\n"
+    "После перевода нажмите кнопку ниже."
+)
+await message.answer(text, parse_mode="Markdown", reply_markup=kb)
     for admin_id in ADMIN_IDS:
         await bot.send_message(admin_id, f"📥 Заявка #{req_id} (пополнение): {data['amount']} сум от {data['sender_card']}")
 
