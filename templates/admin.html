@@ -1,0 +1,11 @@
+
+<h2>Заявки</h2>
+<table border="1">
+<tr><th>ID</th><th>Тип</th><th>Сумма</th><th>ID</th><th>Карта</th><th>Статус</th><th>Дата</th></tr>
+{% for r in rows %}
+<tr>
+<td>{{r[0]}}</td><td>{{r[2]}}</td><td>{{r[3]}}</td><td>{{r[4]}}</td>
+<td>{{r[5] or r[7]}}</td><td>{{r[10]}}</td><td>{{r[11]}}</td>
+</tr>
+{% endfor %}
+</table>
