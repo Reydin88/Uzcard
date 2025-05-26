@@ -1,1 +1,24 @@
-<h2>Карты</h2>{% for c in cards %}<p>{{c}}</p>{% endfor %}
+
+<h2>Управление картами</h2>
+<form method="post">
+    <input name="number" placeholder="Номер карты">
+    <button name="action" value="add">Добавить</button>
+</form>
+<table border="1">
+<tr><th>ID</th><th>Номер</th><th>Активна</th><th>Использования</th><th>Действия</th></tr>
+{% for c in cards %}
+<tr>
+<td>{{c[0]}}</td><td>{{c[1]}}</td><td>{{'✅' if c[2] else '❌'}}</td><td>{{c[3]}}</td>
+<td>
+    <form method="post" style="display:inline">
+        <input type="hidden" name="id" value="{{c[0]}}">
+        <button name="action" value="toggle">Вкл/Выкл</button>
+    </form>
+    <form method="post" style="display:inline">
+        <input type="hidden" name="id" value="{{c[0]}}">
+        <button name="action" value="delete">Удалить</button>
+    </form>
+</td>
+</tr>
+{% endfor %}
+</table>
