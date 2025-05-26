@@ -1,12 +1,6 @@
-
 from aiogram import Bot, Dispatcher, types, executor
-import os
 
-BOT_TOKEN = os.getenv("7886334338:AAEh6rFvpaSngbrSk94aRHdC-jmpWlJB6Bk")
-
-if not BOT_TOKEN:
-    print("❌ BOT_TOKEN не указан!")
-    exit()
+BOT_TOKEN = "7886334338:AAEh6rFvpaSngbrSk94aRHdC-jmpWlJB6Bk"
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
