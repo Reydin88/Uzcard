@@ -1,1 +1,0 @@
-# bot.py — Telegram-бот

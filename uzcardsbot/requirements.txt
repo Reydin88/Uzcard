@@ -1,5 +1,0 @@
-aiogram
-flask
-gunicorn
-python-dotenv
-openpyxl
