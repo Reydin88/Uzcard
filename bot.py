@@ -105,7 +105,7 @@ async def input_sender_card(message: types.Message):
     req_id = cursor.lastrowid
     kb = InlineKeyboardMarkup().add(InlineKeyboardButton("✅ Я оплатил", callback_data=f"paid_{req_id}"))
     await message.answer(
-        f"Переведите {data['amount']} сум на карту:
+    f"Переведите {data['amount']} сум на карту:\n\n`{card_to_pay}`\n\nПосле перевода нажмите кнопку ниже."
 
 `{card_to_pay}`
 
