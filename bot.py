@@ -1,7 +1,7 @@
 
 from aiogram import Bot, Dispatcher, types, executor
 
-BOT_TOKEN = "7886334338:AAEh6rFvpaSngbrSk94aRHdC-jmpWlJB6Bk"
+BOT_TOKEN = "8077158709:AAH44z1eWfUfP1oT3GqMZ0ouILzEP9rzcJ4"
 ADMIN_IDS = [1236771535]  # список админов
 
 bot = Bot(token=BOT_TOKEN)
