@@ -1,9 +1,10 @@
+
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import sqlite3, os
 from datetime import datetime
 
-BOT_TOKEN = "8077158709:AAEvzGF3H4Ey1V597aHJcylpWirI0eXyGlQ"
+BOT_TOKEN = "8018881136:AAFoH6PXITrIbj45PfftBlx-fSWepZ3fdmg"
 ADMIN_IDS = [1236771535]
 DB = "db.sqlite3"
 
@@ -12,10 +13,19 @@ dp = Dispatcher(bot)
 conn = sqlite3.connect(DB, check_same_thread=False)
 cursor = conn.cursor()
 
+@dp.message_handler(commands=["start"])
+async def start_handler(msg: types.Message):
+    kb = InlineKeyboardMarkup(row_width=1)
+    kb.add(
+        InlineKeyboardButton("Пополнение 1xBet", callback_data="svc_topup"),
+        InlineKeyboardButton("Вывод с 1xBet", callback_data="svc_withdraw")
+    )
+    await msg.answer("Выберите услугу:", reply_markup=kb)
+
 @dp.message_handler(commands=["admin"])
 async def admin_panel(message: types.Message):
     if message.from_user.id not in ADMIN_IDS:
-        return
+        return await message.reply("Нет доступа.")
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
         InlineKeyboardButton("Заявки", callback_data="admin_requests"),
@@ -30,6 +40,8 @@ async def view_requests(callback: types.CallbackQuery):
         return
     cursor.execute("SELECT id, service, amount, xbet_id, status FROM requests ORDER BY id DESC LIMIT 10")
     rows = cursor.fetchall()
+    if not rows:
+        return await callback.message.edit_text("Нет заявок.")
     text = "\n".join([f"#{r[0]} | {r[1]} | {r[2]} сум | ID: {r[3]} | Статус: {r[4]}" for r in rows])
     await callback.message.edit_text("Последние заявки:\n\n" + text)
 
@@ -39,6 +51,8 @@ async def view_cards(callback: types.CallbackQuery):
         return
     cursor.execute("SELECT id, number, active, usage_count FROM cards ORDER BY id")
     cards = cursor.fetchall()
+    if not cards:
+        return await callback.message.edit_text("Карт нет.")
     text = "\n".join([f"{'✅' if c[2] else '❌'} {c[1]} (исп: {c[3]}) — /togglecard_{c[0]}" for c in cards])
     await callback.message.edit_text("Карты:\n" + text + "\n\nЧтобы переключить: /togglecard_ID")
 
