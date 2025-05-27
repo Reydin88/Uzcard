@@ -54,10 +54,9 @@ async def process_steps(message: types.Message):
     elif state["step"] == "enter_xbet":
         state["xbet_id"] = message.text.strip()
         state["step"] = "enter_amount"
-        await message.answer(f"Минимум: {MIN_AMOUNT} UZS
-Максимум: {MAX_AMOUNT} UZS
-
-Введите сумму:")
+        await message.answer(
+    f"Минимум: {MIN_AMOUNT} UZS\nМаксимум: {MAX_AMOUNT} UZS\n\nВведите сумму:"
+)
 
     elif state["step"] == "enter_amount":
         try:
