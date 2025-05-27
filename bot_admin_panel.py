@@ -59,9 +59,7 @@ async def handle_steps(msg: types.Message):
         return await msg.answer(
             f"Переведите <b>{state['amount']} сум</b> на карту:
 
-<code>{card}</code>
-
-"
+f"<code>{card}</code>"
             f"Затем нажмите кнопку ниже.",
             parse_mode="HTML", reply_markup=kb)
 
