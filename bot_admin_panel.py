@@ -48,8 +48,6 @@ async def confirm_topup(msg: types.Message, amount, xbet_id):
         f"Переведите {amount} сум на карту:"
 
 <code>{card}</code>
-
-"
         f"Затем нажмите кнопку ниже.", parse_mode="HTML", reply_markup=kb
     )
 
