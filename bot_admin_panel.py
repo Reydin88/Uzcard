@@ -28,8 +28,7 @@ menu_kb.add("👨‍💻 Связь с поддержкой")
 @dp.message_handler(commands=["start"])
 async def send_welcome(message: types.Message):
     user_states.pop(message.from_user.id, None)
-    await message.answer("Добро пожаловать в UZpay!
-Главное меню, что будем делать?", reply_markup=menu_kb)
+    await message.answer("Добро пожаловать в UZpay!\nГлавное меню, что будем делать?", reply_markup=menu_kb)
 
 @dp.message_handler(lambda m: m.text == "📩 Пополнить баланс")
 async def topup_start(message: types.Message):
