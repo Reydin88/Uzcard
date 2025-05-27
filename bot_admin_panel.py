@@ -28,7 +28,8 @@ menu_kb.add("👨‍💻 Связь с поддержкой")
 @dp.message_handler(commands=["start"])
 async def send_welcome(message: types.Message):
     user_states.pop(message.from_user.id, None)
-    await message.answer("Добро пожаловать в UZpay!\nГлавное меню, что будем делать?", reply_markup=menu_kb)
+    await message.answer("Добро пожаловать в UZpay!
+Главное меню, что будем делать?", reply_markup=menu_kb)
 
 @dp.message_handler(lambda m: m.text == "📩 Пополнить баланс")
 async def topup_start(message: types.Message):
@@ -54,9 +55,10 @@ async def process_steps(message: types.Message):
     elif state["step"] == "enter_xbet":
         state["xbet_id"] = message.text.strip()
         state["step"] = "enter_amount"
-        await message.answer(
-    f"Минимум: {MIN_AMOUNT} UZS\nМаксимум: {MAX_AMOUNT} UZS\n\nВведите сумму:"
-)
+        await message.answer(f"Минимум: {MIN_AMOUNT} UZS
+Максимум: {MAX_AMOUNT} UZS
+
+Введите сумму:")
 
     elif state["step"] == "enter_amount":
         try:
@@ -76,17 +78,25 @@ async def process_steps(message: types.Message):
                 InlineKeyboardButton("✅ Подтвердить", callback_data=f"confirm_{req_id}"),
                 InlineKeyboardButton("🚫 Отменить", callback_data=f"cancel_{req_id}")
             )
-        await message.answer(
-            f"<b>Внимание!</b> Переведите точную <b>{exact} UZS</b>, она отличается от вашей суммы!\n\n"
-            f"Карта для перевода: <code>{card}</code>\n"
-            f"НЕ ПЕРЕВОДИТЬ: {amount} UZS ❌\n"
-            f"НУЖНО перевести: <b>{exact} UZS</b> ✅\n\n"
-            f"✅ После внесения средств, нажмите кнопку «Подтвердить» в течение 5 минут!\n"
-            f"⛔ Если ошиблись и другую сумму перевели — мы вернём деньги в течение 15 раб. дней!\n\n"
-            f"TG_ID: {tg_id} #{req_id}",
-            parse_mode="HTML",
-            reply_markup=kb
-        )
+
+            await message.answer(
+                f"<b>Внимание!</b> Переведите точную <b>{exact} UZS</b>, она отличается от вашей суммы!
+
+"
+                f"Карта для перевода: <code>{card}</code>
+"
+                f"НЕ ПЕРЕВОДИТЬ: {amount} UZS ❌
+"
+                f"НУЖНО перевести: <b>{exact} UZS</b> ✅
+
+"
+                f"✅ После внесения средств, нажмите кнопку «Подтвердить» в течение 5 минут!
+"
+                f"⛔ Если ошиблись и другую сумму перевели — мы вернём деньги в течение 15 раб. дней!
+
+"
+                f"TG_ID: {tg_id} #{req_id}",
+                parse_mode="HTML", reply_markup=kb)
             user_states.pop(message.from_user.id)
 
         except:
