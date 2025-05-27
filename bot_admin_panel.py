@@ -14,18 +14,56 @@ cursor = conn.cursor()
 main_kb = ReplyKeyboardMarkup(resize_keyboard=True)
 main_kb.add("Пополнение", "Вывод")
 
+user_states = {}
+
 @dp.message_handler(commands=["start"])
 async def start(msg: types.Message):
+    user_states.pop(msg.from_user.id, None)
     await msg.answer("Выберите действие:", reply_markup=main_kb)
 
 @dp.message_handler(lambda m: m.text == "Пополнение")
 async def start_topup(msg: types.Message):
-    await msg.answer("Введите сумму:")
-    dp.register_message_handler(lambda m: ask_id(m, int(m.text)), state="ask_amount")
+    user_states[msg.from_user.id] = {"step": "await_amount"}
+    await msg.answer("Введите сумму пополнения:")
 
-async def ask_id(msg: types.Message, amount):
-    await msg.answer("Введите ваш ID 1xBet:")
-    dp.register_message_handler(lambda m: confirm_topup(m, amount, m.text), state="ask_id")
+@dp.message_handler()
+async def handle_steps(msg: types.Message):
+    uid = msg.from_user.id
+    if uid not in user_states:
+        return
+    state = user_states[uid]
+
+    if state.get("step") == "await_amount":
+        try:
+            amount = int(msg.text)
+            if amount < 1000 or amount > 10000000:
+                return await msg.answer("Сумма от 1 000 до 10 000 000.")
+            state["amount"] = amount
+            state["step"] = "await_xbet_id"
+            return await msg.answer("Введите ваш ID 1xBet:")
+        except:
+            return await msg.answer("Введите число.")
+
+    elif state.get("step") == "await_xbet_id":
+        xbet_id = msg.text.strip()
+        card = get_active_card()
+        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("INSERT INTO requests (user_id, service, amount, xbet_id, status, created_at) VALUES (?, 'Пополнение', ?, ?, 'ожидает', ?)",
+                       (uid, state["amount"], xbet_id, created_at))
+        conn.commit()
+        req_id = cursor.lastrowid
+        user_states.pop(uid)
+        kb = InlineKeyboardMarkup().add(
+            InlineKeyboardButton("✅ Я оплатил", callback_data=f"paid_{req_id}")
+        )
+        return await msg.answer(
+            f"Переведите <b>{state['amount']} сум</b> на карту:
+
+<code>{card}</code>
+
+"
+            f"Затем нажмите кнопку ниже.",
+            parse_mode="HTML", reply_markup=kb)
 
 def get_active_card():
     cursor.execute("SELECT id, number FROM cards WHERE active = 1 ORDER BY usage_count ASC LIMIT 1")
@@ -36,37 +74,23 @@ def get_active_card():
         return card[1]
     return "9860 0000 0000 0000"
 
-async def confirm_topup(msg: types.Message, amount, xbet_id):
-    card = get_active_card()
-    cursor.execute("INSERT INTO requests (user_id, service, amount, xbet_id, status, created_at) VALUES (?, 'Пополнение', ?, ?, 'ожидает', ?)", 
-        (msg.from_user.id, amount, xbet_id.strip(), datetime.now()))
-    conn.commit()
-    req_id = cursor.lastrowid
-    kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("✅ Я оплатил", callback_data=f"paid_{req_id}"))
-    await msg.answer(
-        f"Переведите {amount} сум на карту:"
-
-f"<code>{card}</code>"
-        f"Затем нажмите кнопку ниже.", parse_mode="HTML", reply_markup=kb
-    )
-
 @dp.callback_query_handler(lambda c: c.data.startswith("paid_"))
-async def paid_check(callback: types.CallbackQuery):
+async def mark_paid(callback: types.CallbackQuery):
     rid = int(callback.data.split("_")[1])
     cursor.execute("UPDATE requests SET status = 'на проверке' WHERE id = ?", (rid,))
     conn.commit()
-    await callback.message.answer("Теперь отправьте фото или PDF чека.")
+    await callback.message.answer("Теперь отправьте чек (фото или PDF).")
     await callback.answer()
 
 @dp.message_handler(content_types=[types.ContentType.PHOTO, types.ContentType.DOCUMENT])
 async def receive_file(msg: types.Message):
-    cursor.execute("SELECT id FROM requests WHERE user_id = ? AND status = 'на проверке' ORDER BY id DESC LIMIT 1", (msg.from_user.id,))
+    uid = msg.from_user.id
+    cursor.execute("SELECT id FROM requests WHERE user_id = ? AND status = 'на проверке' ORDER BY id DESC LIMIT 1", (uid,))
     row = cursor.fetchone()
     if not row:
-        return await msg.reply("Нет ожидающей заявки.")
-    fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id
-    cursor.execute("UPDATE requests SET file1 = ? WHERE id = ?", (fid, row[0]))
+        return await msg.reply("Нет активной заявки.")
+    file_id = msg.photo[-1].file_id if msg.photo else msg.document.file_id
+    cursor.execute("UPDATE requests SET file1 = ? WHERE id = ?", (file_id, row[0]))
     conn.commit()
     await msg.reply("Чек получен. Ожидайте подтверждение.")
 
@@ -78,8 +102,7 @@ async def admin_panel(msg: types.Message):
     rows = cursor.fetchall()
     for r in rows:
         rid, amount, xid, status = r
-        kb = InlineKeyboardMarkup()
-        kb.add(
+        kb = InlineKeyboardMarkup().add(
             InlineKeyboardButton("✅ Подтвердить", callback_data=f"ok_{rid}"),
             InlineKeyboardButton("❌ Отклонить", callback_data=f"no_{rid}")
         )
