@@ -4,7 +4,7 @@ import sqlite3, os
 from datetime import datetime
 import pandas as pd
 
-BOT_TOKEN = "8077158709:AAFDbx2Ek7WhAA6WBiIOWrLuMpAserStCo0"
+BOT_TOKEN = "7878879986:AAEnUlGIKo6MYyzsqny20qnX9adlITGF--s"
 ADMIN_IDS = [1236771535]
 LOG_GROUP_ID = -1000000000000  # ← сюда вставь ID своей лог-группы, если нужна отправка логов
 
