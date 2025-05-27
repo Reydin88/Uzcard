@@ -45,7 +45,7 @@ async def confirm_topup(msg: types.Message, amount, xbet_id):
     kb = InlineKeyboardMarkup()
     kb.add(InlineKeyboardButton("✅ Я оплатил", callback_data=f"paid_{req_id}"))
     await msg.answer(
-        f"Переведите {amount} сум на карту:
+        f"Переведите {amount} сум на карту:"
 
 <code>{card}</code>
 
