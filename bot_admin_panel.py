@@ -20,7 +20,6 @@ conn.commit()
 
 user_states = {}
 
-# Reply-кнопки
 menu_kb = ReplyKeyboardMarkup(resize_keyboard=True)
 menu_kb.add("📩 Пополнить баланс", "📤 Вывести средства")
 menu_kb.add("📈 Курс", "🧾 История")
@@ -29,7 +28,8 @@ menu_kb.add("👨‍💻 Связь с поддержкой")
 @dp.message_handler(commands=["start"])
 async def send_welcome(message: types.Message):
     user_states.pop(message.from_user.id, None)
-    await message.answer("Добро пожаловать в UZpay!\nГлавное меню, что будем делать?", reply_markup=menu_kb)
+    await message.answer("Добро пожаловать в UZpay!
+Главное меню, что будем делать?", reply_markup=menu_kb)
 
 @dp.message_handler(lambda m: m.text == "📩 Пополнить баланс")
 async def topup_start(message: types.Message):
@@ -55,7 +55,10 @@ async def process_steps(message: types.Message):
     elif state["step"] == "enter_xbet":
         state["xbet_id"] = message.text.strip()
         state["step"] = "enter_amount"
-        await message.answer(f"Минимум: {MIN_AMOUNT} UZS\\nМаксимум: {MAX_AMOUNT} UZS\\n\\nВведите сумму:")
+        await message.answer(f"Минимум: {MIN_AMOUNT} UZS
+Максимум: {MAX_AMOUNT} UZS
+
+Введите сумму:")
 
     elif state["step"] == "enter_amount":
         try:
