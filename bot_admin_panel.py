@@ -57,7 +57,7 @@ async def handle_steps(msg: types.Message):
             InlineKeyboardButton("✅ Я оплатил", callback_data=f"paid_{req_id}")
         )
         return await msg.answer(
-            f"Переведите <b>{state['amount']} сум</b> на карту:
+            f"Переведите <b>{state['amount']} сум</b> на карту:"
 
 f"<code>{card}</code>"
             f"Затем нажмите кнопку ниже.",
