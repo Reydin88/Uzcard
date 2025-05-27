@@ -4,7 +4,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import sqlite3, os
 from datetime import datetime
 
-BOT_TOKEN = "8077158709:AAEvzGF3H4Ey1V597aHJcylpWirI0eXyGlQ"
+BOT_TOKEN = "8018881136:AAFoH6PXITrIbj45PfftBlx-fSWepZ3fdmg"
 ADMIN_IDS = [1236771535]
 DB = "db.sqlite3"
 
@@ -77,6 +77,20 @@ async def send_excel(callback: types.CallbackQuery):
     path = "requests_export.xlsx"
     df.to_excel(path, index=False)
     await bot.send_document(callback.from_user.id, open(path, "rb"))
+
+
+@dp.message_handler(commands=["addcard"])
+async def add_card(message: types.Message):
+    if message.from_user.id not in ADMIN_IDS:
+        return await message.reply("Нет доступа.")
+    args = message.text.split()
+    if len(args) != 2:
+        return await message.reply("Используй формат:\n/addcard 9860XXXXXXXXXXXX")
+    number = args[1]
+    cursor.execute("INSERT INTO cards (number) VALUES (?)", (number,))
+    conn.commit()
+    await message.reply(f"Карта {number} добавлена.")
+
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
