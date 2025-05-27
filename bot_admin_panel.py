@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import sqlite3, os
 from datetime import datetime
 
-BOT_TOKEN = "8018881136:AAFoH6PXITrIbj45PfftBlx-fSWepZ3fdmg"
+BOT_TOKEN = "8077158709:AAEvzGF3H4Ey1V597aHJcylpWirI0eXyGlQ"
 ADMIN_IDS = [1236771535]
 DB = "db.sqlite3"
 
