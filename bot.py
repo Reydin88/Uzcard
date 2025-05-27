@@ -4,7 +4,7 @@ from datetime import datetime
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-BOT_TOKEN = "8077158709:AAEvzGF3H4Ey1V597aHJcylpWirI0eXyGlQ"
+BOT_TOKEN = "8077158709:AAFDbx2Ek7WhAA6WBiIOWrLuMpAserStCo0"
 ADMIN_IDS = [1236771535]
 DB = "db.sqlite3"
 LIMITS = {"topup": (10000, 5000000), "withdraw": (50000, 3000000)}
