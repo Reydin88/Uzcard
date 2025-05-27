@@ -77,7 +77,6 @@ async def process_steps(message: types.Message):
                 InlineKeyboardButton("🚫 Отменить", callback_data=f"cancel_{req_id}")
             )
 
-            await message.answer(
                 await message.answer(
     f"<b>Внимание!</b> Переведите точную <b>{exact} UZS</b>, она отличается от вашей суммы!\n\n"
     f"Карта для перевода: <code>{card}</code>\n"
